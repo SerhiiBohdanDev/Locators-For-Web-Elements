@@ -1,7 +1,7 @@
 ﻿using OpenQA.Selenium;
 using System.Collections.ObjectModel;
 
-namespace LocatorsForWebElements;
+namespace LocatorsForWebElements.CoreLayer;
 internal static class IWebElementExtensions
 {
 

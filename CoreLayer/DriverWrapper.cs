@@ -3,7 +3,7 @@ using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.Extensions;
 using OpenQA.Selenium.Support.UI;
 
-namespace LocatorsForWebElements;
+namespace LocatorsForWebElements.CoreLayer;
 internal class DriverWrapper
 {
     private const int MaxRetries = 3;
@@ -19,8 +19,8 @@ internal class DriverWrapper
     public void GoToUrl(string url) => driver.Navigate().GoToUrl(url);
     public void Close()
     {
-        this.driver.Quit();
-        this.driver.Dispose();
+        driver.Quit();
+        driver.Dispose();
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ internal class DriverWrapper
     /// <param name="element"></param>
     public void SafeClick(IWebElement element)
     {
-        new Actions(this.driver)
+        new Actions(driver)
             .MoveToElement(element)
             .Click()
             .Build()
@@ -39,26 +39,26 @@ internal class DriverWrapper
 
     public void JavascriptClick(IWebElement element)
     {
-        this.driver.ExecuteJavaScript("arguments[0].click();", element);
+        driver.ExecuteJavaScript("arguments[0].click();", element);
     }
 
     public void Hover(IWebElement element)
     {
-        new Actions(this.driver)
+        new Actions(driver)
                 .MoveToElement(element)
                 .Perform();
     }
 
     public void MoveToElement(IWebElement element)
     {
-        new Actions(this.driver)
+        new Actions(driver)
                 .MoveToElement(element)
                 .Perform();
     }
 
     public IWebElement WaitForElementToBePresent(By by)
     {
-        var wait = new WebDriverWait(this.driver, this.timeout);
+        var wait = new WebDriverWait(driver, timeout);
         return wait.Until(driver =>
         {
             try
@@ -83,7 +83,7 @@ internal class DriverWrapper
         {
             try
             {
-                var wait = new WebDriverWait(this.driver, this.timeout);
+                var wait = new WebDriverWait(driver, timeout);
                 return wait.Until(driver =>
                 {
                     try
@@ -114,7 +114,7 @@ internal class DriverWrapper
         {
             try
             {
-                var wait = new WebDriverWait(this.driver, this.timeout);
+                var wait = new WebDriverWait(driver, timeout);
                 return wait.Until(driver =>
                 {
                     try
@@ -140,7 +140,7 @@ internal class DriverWrapper
 
     public IWebElement WaitForElementToBeClickable(By by)
     {
-        var wait = new WebDriverWait(this.driver, this.timeout);
+        var wait = new WebDriverWait(driver, timeout);
         return wait.Until(driver =>
         {
             try
