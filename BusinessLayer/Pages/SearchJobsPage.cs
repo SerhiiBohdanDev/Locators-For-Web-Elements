@@ -1,7 +1,7 @@
 ﻿using LocatorsForWebElements.CoreLayer;
 using OpenQA.Selenium;
 
-namespace LocatorsForWebElements.BusinessLayer;
+namespace LocatorsForWebElements.BusinessLayer.Pages;
 internal class SearchJobsPage
 {
     private readonly DriverWrapper driver;
@@ -22,21 +22,21 @@ internal class SearchJobsPage
         this.driver = driver;
     }
 
-    public SearchJobsPage EnterLanguage(string language)
+    public SearchJobsPage EnterLanguage(string[] language)
     {
-        EnterText(this.searchInput, language);
+        EnterText(searchInput, language[0]);
         return this;
     }
 
     public SearchJobsPage EnterLocation(string location)
     {
-        EnterText(this.locationDropdown, location);
+        EnterText(locationDropdown, location);
         return this;
     }
 
     public SearchJobsPage ClickRemoteCheckbox()
     {
-        var checkbox = this.driver.WaitForElementToBePresent(this.remoteCheckbox);
+        var checkbox = driver.WaitForElementToBePresent(remoteCheckbox);
         // the checkbox has opacity at 0 which makes it Displayed property false, and so clicking is not allowed
         // so we use js to click
         driver.JavascriptClick(checkbox);
@@ -45,12 +45,12 @@ internal class SearchJobsPage
 
     public SearchJobsPage ClickSearch()
     {
-        var search = driver.WaitForElementToBeClickable(this.searchButton);
+        var search = driver.WaitForElementToBeClickable(searchButton);
         driver.SafeClick(search);
         return this;
     }
 
-    public bool ContainsLanguageInLastSearchResult(string language)
+    public bool ContainsLanguageInLastSearchResult(string[] language)
     {
         var container = driver.WaitForElementToBeVisible(resultsContainer);
         var lastResult = driver.WaitForElementToBeVisible(lastElement, container);
@@ -63,48 +63,63 @@ internal class SearchJobsPage
         return false;
     }
 
-    private bool HasLanguageInTitle(IWebElement parent, string language)
+    private bool HasLanguageInTitle(IWebElement parent, string[] language)
     {
         var title = parent.FindElement(jobCardTitle);
-        return (ContainsText(title.Text, language));
+        for (int i = 0; i < language.Length; i++)
+        {
+            if (ContainsText(title.Text, language[i]))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private bool HasLanguageInShortDescription(IWebElement parent, string language)
+    private bool HasLanguageInShortDescription(IWebElement parent, string[] language)
     {
         var shortDescription = parent.FindElement(shortJobDescription);
-        return (ContainsText(shortDescription.Text, language));
+        for (int i = 0; i < language.Length; i++)
+        {
+            if (ContainsText(shortDescription.Text, language[i]))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private bool HasLanguageInFullDescription(IWebElement parent, string language)
+    private bool HasLanguageInFullDescription(IWebElement parent, string[] language)
     {
         var container = parent.FindElement(fullDescriptionContainer);
         var sentences = container.FindElements(descriptionSentences);
 
-        bool sentenceContainsLanguage = false;
-        foreach (var item in sentences)
+        foreach (var sentence in sentences)
         {
             // using this inseat of property because sentences are hidden
-            var text = item.GetText();
+            var text = sentence.GetText();
             if (text == null)
             {
                 continue;
             }
 
-            if (ContainsText(text, language))
+            for (int i = 0; i < language.Length; i++)
             {
-                sentenceContainsLanguage = true;
-                break;
+                if (ContainsText(text, language[i]))
+                {
+                    return true;
+                }
             }
         }
 
-        return sentenceContainsLanguage;
+        return false;
     }
 
     private void EnterText(By locator, string text)
     {
-        this.driver.WaitForElementToBeClickable(locator)
+        driver.WaitForElementToBeClickable(locator)
             .SendKeys(text);
     }
 
-    private static bool ContainsText(string text, string target) => text.Contains(target, StringComparison.InvariantCultureIgnoreCase);
+    private static bool ContainsText(string text, string target) => text.Contains(target, StringComparison.InvariantCulture);
 }

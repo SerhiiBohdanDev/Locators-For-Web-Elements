@@ -1,7 +1,7 @@
 ﻿using LocatorsForWebElements.CoreLayer;
 using OpenQA.Selenium;
 
-namespace LocatorsForWebElements.BusinessLayer;
+namespace LocatorsForWebElements.BusinessLayer.Pages;
 internal class MainPage
 {
 
@@ -25,11 +25,11 @@ internal class MainPage
 
     public MainPage ClickJoinUs()
     {
-        var topRow = driver.WaitForElementToBePresent(this.topNavRow);
-        var careers = topRow.FindElement(this.careersText);
+        var topRow = driver.WaitForElementToBePresent(topNavRow);
+        var careers = topRow.FindElement(careersText);
         driver.Hover(careers);
 
-        var join = topRow.FindElement(this.joinUs);
+        var join = topRow.FindElement(joinUs);
         join.Click();
         return this;
     }

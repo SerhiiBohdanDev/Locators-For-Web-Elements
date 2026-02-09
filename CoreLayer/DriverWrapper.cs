@@ -49,13 +49,6 @@ internal class DriverWrapper
                 .Perform();
     }
 
-    public void MoveToElement(IWebElement element)
-    {
-        new Actions(driver)
-                .MoveToElement(element)
-                .Perform();
-    }
-
     public IWebElement WaitForElementToBePresent(By by, IWebElement? parent = default)
     {
         return WaitForElement(by, parent);
@@ -71,7 +64,15 @@ internal class DriverWrapper
         return WaitForElement(by, parent, GetClickableElement);
     }
 
-    private IWebElement WaitForElement(By by, IWebElement? parent = default, Func<IWebElement, IWebElement>? checkAction = null)
+    /// <summary>
+    /// Waits for element and returns it or null based on check action
+    /// </summary>
+    /// <param name="by"></param>
+    /// <param name="parent"></param>
+    /// <param name="checkAction">Action to perform on element to decide whether return element or null</param>
+    /// <returns></returns>
+    /// <exception cref="StaleElementReferenceException"></exception>
+    private IWebElement WaitForElement(By by, IWebElement? parent = default, Func<IWebElement?, IWebElement?>? checkAction = null)
     {
         int retries = 0;
         while (retries < MaxRetries)
@@ -105,15 +106,19 @@ internal class DriverWrapper
         throw new StaleElementReferenceException($"Element located by {by} remained stale after {MaxRetries} attempts.");
     }
 
-    private static IWebElement GetVisibleElement(IWebElement element)
+    private static IWebElement? GetVisibleElement(IWebElement? element)
     {
-        // forces check for stallness
-        // without it last element in the list of found jobs would throw StaleElementReferenceException after all retries
-        bool _ = element.Displayed;
+        if (element != null)
+        {
+            // forces check for stallness
+            // without it last element in the list of found jobs would throw StaleElementReferenceException after all retries
+            bool _ = element.Displayed;
+        }
+        
         return element;
     }
 
-    private static IWebElement GetClickableElement(IWebElement element)
+    private static IWebElement? GetClickableElement(IWebElement? element)
     {
         if (element != null && element.Displayed && element.Enabled)
         {
