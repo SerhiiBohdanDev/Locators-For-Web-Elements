@@ -23,17 +23,13 @@ internal class SearchJobsPage
 
     public SearchJobsPage EnterLanguage(string language)
     {
-        var searchField = this.driver.WaitForElementToBeClickable(this.searchInput);
-        searchField.SendKeys(language);
-        //EnterText(this.searchInput, language);
+        EnterText(this.searchInput, language);
         return this;
     }
 
     public SearchJobsPage EnterLocation(string location)
     {
-        var dropdownInput = this.driver.WaitForElementToBeClickable(this.locationDropdown);
-        dropdownInput.SendKeys(location);
-        //EnterText(this.locationDropdown, location);
+        EnterText(this.locationDropdown, location);
         return this;
     }
 
@@ -70,14 +66,12 @@ internal class SearchJobsPage
     {
         var title = parent.FindElement(jobCardTitle);
         return (ContainsText(title.Text, language));
-        //return title.Text.Contains(language, StringComparison.InvariantCultureIgnoreCase);
     }
 
     private bool HasLanguageInShortDescription(IWebElement parent, string language)
     {
         var shortDescription = parent.FindElement(shortJobDescription);
         return (ContainsText(shortDescription.Text, language));
-        //return shortDescription.Text.Contains(language, StringComparison.InvariantCultureIgnoreCase);
     }
 
     private bool HasLanguageInFullDescription(IWebElement parent, string language)
@@ -111,5 +105,5 @@ internal class SearchJobsPage
             .SendKeys(text);
     }
 
-    private bool ContainsText(string text, string target) => text.Contains(target, StringComparison.InvariantCultureIgnoreCase);
+    private static bool ContainsText(string text, string target) => text.Contains(target, StringComparison.InvariantCultureIgnoreCase);
 }
