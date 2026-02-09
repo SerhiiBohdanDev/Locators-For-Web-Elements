@@ -18,6 +18,7 @@ namespace LocatorsForWebElements.TestLayer
         }
 
         [TestCase("javascript", "Georgia")]
+        [TestCase("a", "Georgia")]
         public void SearchJobsTest(string language, string location)
         {
             new MainPage(this.driver)

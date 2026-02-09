@@ -15,6 +15,7 @@ internal class SearchJobsPage
     public readonly By shortJobDescription = By.CssSelector("div[data-testid='job-card-description']");
     public readonly By fullDescriptionContainer = By.CssSelector("div[data-testid='categories-container']");
     public readonly By descriptionSentences = By.CssSelector("div[data-testid='rich-text']");
+    public readonly By lastElement = By.XPath("./*[last()]");
 
     public SearchJobsPage(DriverWrapper driver)
     {
@@ -52,7 +53,7 @@ internal class SearchJobsPage
     public bool ContainsLanguageInLastSearchResult(string language)
     {
         var container = driver.WaitForElementToBeVisible(resultsContainer);
-        var lastResult = driver.WaitForElementToBeVisible(By.XPath("./*[last()]"), container);
+        var lastResult = driver.WaitForElementToBeVisible(lastElement, container);
         if (HasLanguageInTitle(lastResult, language) ||
             HasLanguageInShortDescription(lastResult, language) ||
             HasLanguageInFullDescription(lastResult, language))

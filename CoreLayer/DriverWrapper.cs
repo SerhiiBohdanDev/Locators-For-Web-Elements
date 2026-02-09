@@ -56,30 +56,25 @@ internal class DriverWrapper
                 .Perform();
     }
 
-    public IWebElement WaitForElementToBePresent(By by)
+    public IWebElement WaitForElementToBePresent(By by, IWebElement? parent = default)
     {
-        var wait = new WebDriverWait(driver, timeout);
-        return wait.Until(driver =>
-        {
-            try
-            {
-                var element = driver.FindElement(by);
-                if (element != null)
-                    return element;
-            }
-            catch (NoSuchElementException)
-            {
-                Console.WriteLine($"'NoSuchElementException' is found. By = {by}");
-            }
-
-            return null;
-        });
+        return WaitForElement(by, parent);
     }
 
-    public IWebElement WaitForElementToBeVisible(By by)
+    public IWebElement WaitForElementToBeVisible(By by, IWebElement? parent = default)
     {
-        int reties = 0;
-        while (reties < MaxRetries)
+        return WaitForElement(by, parent, GetVisibleElement);
+    }
+
+    public IWebElement WaitForElementToBeClickable(By by, IWebElement? parent = default)
+    {
+        return WaitForElement(by, parent, GetClickableElement);
+    }
+
+    private IWebElement WaitForElement(By by, IWebElement? parent = default, Func<IWebElement, IWebElement>? checkAction = null)
+    {
+        int retries = 0;
+        while (retries < MaxRetries)
         {
             try
             {
@@ -88,9 +83,12 @@ internal class DriverWrapper
                 {
                     try
                     {
-                        var element = driver.FindElement(by);
-                        // forces check for stallness?
-                        bool _ = element.Displayed;
+                        IWebElement element = FindElement(by, parent);
+                        if (checkAction != null)
+                        {
+                            return checkAction.Invoke(element);
+                        }
+
                         return element;
                     }
                     catch (StaleElementReferenceException)
@@ -101,60 +99,32 @@ internal class DriverWrapper
             }
             catch (WebDriverTimeoutException)
             {
-                reties++;
+                retries++;
             }
         }
         throw new StaleElementReferenceException($"Element located by {by} remained stale after {MaxRetries} attempts.");
     }
 
-    public IWebElement WaitForElementToBeVisible(By by, IWebElement parent)
+    private static IWebElement GetVisibleElement(IWebElement element)
     {
-        int reties = 0;
-        while (reties < MaxRetries)
-        {
-            try
-            {
-                var wait = new WebDriverWait(driver, timeout);
-                return wait.Until(driver =>
-                {
-                    try
-                    {
-                        var element = parent.FindElement(by);
-                        // forces check for stallness?
-                        bool _ = element.Displayed;
-                        return element;
-                    }
-                    catch (StaleElementReferenceException)
-                    {
-                        return null;
-                    }
-                });
-            }
-            catch (WebDriverTimeoutException)
-            {
-                reties++;
-            }
-        }
-        throw new StaleElementReferenceException($"Element located by {by} remained stale after {MaxRetries} attempts.");
+        // forces check for stallness
+        // without it last element in the list of found jobs would throw StaleElementReferenceException after all retries
+        bool _ = element.Displayed;
+        return element;
     }
 
-    public IWebElement WaitForElementToBeClickable(By by)
+    private static IWebElement GetClickableElement(IWebElement element)
     {
-        var wait = new WebDriverWait(driver, timeout);
-        return wait.Until(driver =>
+        if (element != null && element.Displayed && element.Enabled)
         {
-            try
-            {
-                var element = driver.FindElement(by);
-                if (element != null && element.Enabled)
-                    return element;
-            }
-            catch (NoSuchElementException)
-            {
-                Console.WriteLine($"'NoSuchElementException' is found. By = {by}");
-            }
+            return element;
+        }
 
-            return null;
-        });
+        return null;
+    }
+
+    private IWebElement FindElement(By by, IWebElement? parent = default)
+    {
+        return parent == null ? driver.FindElement(by) : parent.FindElement(by);
     }
 }
