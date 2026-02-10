@@ -53,22 +53,28 @@ namespace LocatorsForWebElements.TestLayer
             Assert.That(result, Is.True);
         }
 
-        //[Test]
-        //public void GeneralSearchTest()
-        //{
-        //    //driver.Navigate().GoToUrl(EpamLink);
-        //    //By magnifyingGlass = By.CssSelector("button[class='header-search__button header__icon']");
-        //    ////By searchField = By.Id("new_form_search");
-        //    //By searchField = By.Name("q");
+        [TestCase("BLOCKCHAIN")]
+        [TestCase("Cloud")]
+        [TestCase("Automation")]
+        public void GeneralSearchTest(string term)
+        {
+            var mainPage = new MainPage(this.driver)
+                .Open()
+                .ClickMagnifyingGlass()
+                .EnterSearchTerm(term)
+                .ClickFind();
 
-        //    //var glass = WaitForElementToBeClickable(magnifyingGlass);
-        //    //glass.Click();
+            var result = mainPage.GetSearchResultTitles();
+            foreach (var item in result)
+            {
+                if (!item.Contains(term, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    Assert.Fail($"'{item}' does NOT contain '{term}'");
+                }
+            }
 
-        //    //var field = WaitForElementToBeClickable(searchField);
-        //    //field.SendKeys("test123");
-
-        //    Assert.Pass();
-        //}
+            Assert.Pass($"All link titles contain term '{term}'");
+        }
 
         [TearDown]
         public void Teardown()

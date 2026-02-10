@@ -2,6 +2,7 @@
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.Extensions;
 using OpenQA.Selenium.Support.UI;
+using System.Collections.ObjectModel;
 
 namespace LocatorsForWebElements.CoreLayer;
 internal class DriverWrapper
@@ -64,6 +65,11 @@ internal class DriverWrapper
         return WaitForElement(by, parent, GetClickableElement);
     }
 
+    public ReadOnlyCollection<IWebElement> WaitForElementsCollectionToBeClickable(By by, IWebElement? parent = default)
+    {
+        return WaitForElements(by, parent, GetClickableElement);
+    }
+
     /// <summary>
     /// Waits for element and returns it or null based on check action
     /// </summary>
@@ -72,7 +78,10 @@ internal class DriverWrapper
     /// <param name="checkAction">Action to perform on element to decide whether return element or null</param>
     /// <returns></returns>
     /// <exception cref="StaleElementReferenceException"></exception>
-    private IWebElement WaitForElement(By by, IWebElement? parent = default, Func<IWebElement?, IWebElement?>? checkAction = null)
+    private IWebElement WaitForElement(
+        By by, 
+        IWebElement? parent = default, 
+        Func<IWebElement?, IWebElement?>? checkAction = null)
     {
         int retries = 0;
         while (retries < MaxRetries)
@@ -84,13 +93,38 @@ internal class DriverWrapper
                 {
                     try
                     {
-                        IWebElement element = FindElement(by, parent);
-                        if (checkAction != null)
-                        {
-                            return checkAction.Invoke(element);
-                        }
+                        return CheckElementValidity(by, parent, checkAction);
+                    }
+                    catch (StaleElementReferenceException)
+                    {
+                        return null;
+                    }
+                });
+            }
+            catch (WebDriverTimeoutException)
+            {
+                retries++;
+            }
+        }
+        throw new StaleElementReferenceException($"Element located by {by} remained stale after {MaxRetries} attempts.");
+    }
 
-                        return element;
+    private ReadOnlyCollection<IWebElement> WaitForElements(
+        By by, 
+        IWebElement? parent = default,
+        Func<IWebElement?, IWebElement?>? checkAction = null)
+    {
+        int retries = 0;
+        while (retries < MaxRetries)
+        {
+            try
+            {
+                var wait = new WebDriverWait(driver, timeout);
+                return wait.Until(driver =>
+                {
+                    try
+                    {
+                        return CheckElementsCollectionValidity(by, parent, checkAction);
                     }
                     catch (StaleElementReferenceException)
                     {
@@ -128,8 +162,49 @@ internal class DriverWrapper
         return null;
     }
 
+    private IWebElement? CheckElementValidity(
+        By by,
+        IWebElement? parent = default,
+        Func<IWebElement?, IWebElement?>? checkAction = null)
+    {
+        IWebElement element = FindElement(by, parent);
+        if (checkAction != null)
+        {
+            return checkAction.Invoke(element);
+        }
+
+        return element;
+    }
+
+    private ReadOnlyCollection<IWebElement>? CheckElementsCollectionValidity(
+        By by,
+        IWebElement? parent = default, 
+        Func<IWebElement?, IWebElement?>? checkAction = null)
+    {
+        var elements = FindElements(by, parent);
+        if (elements != null && elements.Count > 0)
+        {
+            if (checkAction != null)
+            {
+                foreach (var item in elements)
+                {
+                    // will throw StaleElementReferenceException if element doesn't fit condition, which will be caught later
+                    checkAction.Invoke(item);
+                }
+            }
+            return elements;
+        }
+
+        return null;
+    }
+
     private IWebElement FindElement(By by, IWebElement? parent = default)
     {
         return parent == null ? driver.FindElement(by) : parent.FindElement(by);
+    }
+
+    private ReadOnlyCollection<IWebElement> FindElements(By by, IWebElement? parent = default)
+    {
+        return parent == null ? driver.FindElements(by) : parent.FindElements(by);
     }
 }
