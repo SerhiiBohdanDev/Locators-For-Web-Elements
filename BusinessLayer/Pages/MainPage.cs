@@ -5,12 +5,12 @@ namespace LocatorsForWebElements.BusinessLayer.Pages;
 internal class MainPage
 {
 
-    public const string Url = "https://www.epam.com/";
+    private const string PageUrl = "https://www.epam.com/";
     private readonly DriverWrapper driver;
 
-    public readonly By topNavRow = By.ClassName("top-navigation__row");
-    public readonly By careersText = By.LinkText("Careers");
-    public readonly By joinUs = By.PartialLinkText("Join our Team");
+    private readonly By topNavRow = By.ClassName("top-navigation__row");
+    private readonly By careersText = By.LinkText("Careers");
+    private readonly By joinUs = By.PartialLinkText("Join our Team");
 
     public MainPage(DriverWrapper driver)
     {
@@ -19,7 +19,7 @@ internal class MainPage
 
     public MainPage Open()
     {
-        driver.GoToUrl(Url);
+        driver.GoToUrl(PageUrl);
         return this;
     }
 

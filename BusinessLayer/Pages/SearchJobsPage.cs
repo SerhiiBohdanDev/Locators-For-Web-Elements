@@ -6,16 +6,17 @@ internal class SearchJobsPage
 {
     private readonly DriverWrapper driver;
 
-    public readonly By searchInput = By.CssSelector("input[data-testid='search-input']");
-    public readonly By locationDropdown = By.Id("react-select-4-input");
-    public readonly By remoteCheckbox = By.Id("checkbox-vacancy_type-Remote-«r0»");
-    public readonly By searchButton = By.XPath("//*[@id='anchor-list']/div/div/div/form/button");
-    public readonly By resultsContainer = By.ClassName("List_list___59gh");
-    public readonly By jobCardTitle = By.CssSelector("span[data-testid='job-card-title']");
-    public readonly By shortJobDescription = By.CssSelector("div[data-testid='job-card-description']");
-    public readonly By fullDescriptionContainer = By.CssSelector("div[data-testid='categories-container']");
-    public readonly By descriptionSentences = By.CssSelector("div[data-testid='rich-text']");
-    public readonly By lastElement = By.XPath("./*[last()]");
+    private readonly By form = By.XPath("//*[@id=\"anchor-list\"]//child::form");
+    private readonly By keywordSearchField = By.CssSelector("input[data-testid='search-input']");
+    private readonly By locationDropdown = By.XPath("//input[contains(@class, 'Dropdown_defaultOption__pvL_3') and contains(@class, 'ym-disable-keys') and contains(@class, 'dropdown__input')]");
+    private readonly By remoteCheckbox = By.Id("checkbox-vacancy_type-Remote-«r0»");
+    private readonly By searchButton = By.XPath("//*[@id='anchor-list']//child::button[@type='submit']");
+    private readonly By resultsContainer = By.ClassName("List_list___59gh");
+    private readonly By jobCardTitle = By.CssSelector("span[data-testid='job-card-title']");
+    private readonly By shortJobDescription = By.CssSelector("div[data-testid='job-card-description']");
+    private readonly By fullDescriptionContainer = By.CssSelector("div[data-testid='categories-container']");
+    private readonly By descriptionSentences = By.CssSelector("div[data-testid='rich-text']");
+    private readonly By lastElement = By.XPath("./*[last()]");
 
     public SearchJobsPage(DriverWrapper driver)
     {
@@ -24,13 +25,17 @@ internal class SearchJobsPage
 
     public SearchJobsPage EnterLanguage(string[] language)
     {
-        EnterText(searchInput, language[0]);
+        var formContainer = driver.WaitForElementToBePresent(form);
+        var element = driver.WaitForElementToBeClickable(keywordSearchField, formContainer);
+        EnterText(element, language[0]);
         return this;
     }
 
     public SearchJobsPage EnterLocation(string location)
     {
-        EnterText(locationDropdown, location);
+        var formContainer = driver.WaitForElementToBePresent(form);
+        var element = driver.WaitForElementToBeClickable(locationDropdown, formContainer);
+        EnterText(element, location, true);
         return this;
     }
 
@@ -75,9 +80,13 @@ internal class SearchJobsPage
         return results;
     }
 
-    private void EnterText(By locator, string text)
+    private static void EnterText(IWebElement element, string text, bool pressEnter = false)
     {
-        driver.WaitForElementToBeClickable(locator)
-            .SendKeys(text);
+        element.SendKeys(text);
+        // in order to correctly select location have to press enter
+        if (pressEnter)
+        {
+            element.SendKeys(Keys.Enter);
+        }
     }
 }
