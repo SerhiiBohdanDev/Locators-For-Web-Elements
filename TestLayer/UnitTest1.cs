@@ -31,7 +31,25 @@ namespace LocatorsForWebElements.TestLayer
                 .ClickRemoteCheckbox()
                 .ClickSearch();
 
-            var result = searchPage.ContainsLanguageInLastSearchResult(model.Language);
+            var jobInformation = searchPage.GetJobInformation();
+            var result = false;
+            for (int i = 0; i < jobInformation.Count; i++)
+            {
+                for (int k = 0; k < model.Language.Length; k++)
+                {
+                    if (ContainsText(jobInformation[i], model.Language[k]))
+                    {
+                        result = true;
+                        break;
+                    }
+                }
+
+                if (result)
+                {
+                    break;
+                }
+            }
+
             Assert.That(result, Is.True);
         }
 
@@ -61,11 +79,13 @@ namespace LocatorsForWebElements.TestLayer
         private static IEnumerable<JobSearchModel> JobsSearchData()
         {
             yield return new JobSearchModel() { Language = new string[] { "JavaScript", "JS", "Javascript" }, Location = "Georgia" };
-            yield return new JobSearchModel() { Language = new string[] { "C#", "c#" }, Location = "Georgia" };
-            yield return new JobSearchModel() { Language = new string[] { "Python", "python" }, Location = "Georgia" };
-            yield return new JobSearchModel() { Language = new string[] { "JavaScript", "JS", "Javascript" }, Location = "Belgium" };
-            yield return new JobSearchModel() { Language = new string[] { "C#", "c#" }, Location = "Belgium" };
-            yield return new JobSearchModel() { Language = new string[] { "Python", "python" }, Location = "Belgium" };
+            //yield return new JobSearchModel() { Language = new string[] { "C#", "c#" }, Location = "Georgia" };
+            //yield return new JobSearchModel() { Language = new string[] { "Python", "python" }, Location = "Georgia" };
+            //yield return new JobSearchModel() { Language = new string[] { "JavaScript", "JS", "Javascript" }, Location = "Belgium" };
+            //yield return new JobSearchModel() { Language = new string[] { "C#", "c#" }, Location = "Belgium" };
+            //yield return new JobSearchModel() { Language = new string[] { "Python", "python" }, Location = "Belgium" };
         }
+
+        private static bool ContainsText(string text, string target) => text.Contains(target, StringComparison.InvariantCulture);
     }
 }

@@ -50,69 +50,29 @@ internal class SearchJobsPage
         return this;
     }
 
-    public bool ContainsLanguageInLastSearchResult(string[] language)
+    public List<string> GetJobInformation()
     {
+        var results = new List<string>();
         var container = driver.WaitForElementToBeVisible(resultsContainer);
         var lastResult = driver.WaitForElementToBeVisible(lastElement, container);
-        if (HasLanguageInTitle(lastResult, language) ||
-            HasLanguageInShortDescription(lastResult, language) ||
-            HasLanguageInFullDescription(lastResult, language))
+        var title = lastResult.FindElement(jobCardTitle);
+        results.Add(title.Text);
+
+        var shortDescription = lastResult.FindElement(shortJobDescription);
+        results.Add(shortDescription.Text);
+
+        var fullDescription = lastResult.FindElement(fullDescriptionContainer);
+        var sentences = fullDescription.FindElements(descriptionSentences);
+        for (int i = 0; i < sentences.Count; i++)
         {
-            return true;
-        }
-        return false;
-    }
-
-    private bool HasLanguageInTitle(IWebElement parent, string[] language)
-    {
-        var title = parent.FindElement(jobCardTitle);
-        for (int i = 0; i < language.Length; i++)
-        {
-            if (ContainsText(title.Text, language[i]))
+            var text = sentences[i].GetText();
+            if (text != null)
             {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private bool HasLanguageInShortDescription(IWebElement parent, string[] language)
-    {
-        var shortDescription = parent.FindElement(shortJobDescription);
-        for (int i = 0; i < language.Length; i++)
-        {
-            if (ContainsText(shortDescription.Text, language[i]))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private bool HasLanguageInFullDescription(IWebElement parent, string[] language)
-    {
-        var container = parent.FindElement(fullDescriptionContainer);
-        var sentences = container.FindElements(descriptionSentences);
-
-        foreach (var sentence in sentences)
-        {
-            // using this inseat of property because sentences are hidden
-            var text = sentence.GetText();
-            if (text == null)
-            {
-                continue;
-            }
-
-            for (int i = 0; i < language.Length; i++)
-            {
-                if (ContainsText(text, language[i]))
-                {
-                    return true;
-                }
+                results.Add(text);
             }
         }
 
-        return false;
+        return results;
     }
 
     private void EnterText(By locator, string text)
@@ -120,6 +80,4 @@ internal class SearchJobsPage
         driver.WaitForElementToBeClickable(locator)
             .SendKeys(text);
     }
-
-    private static bool ContainsText(string text, string target) => text.Contains(target, StringComparison.InvariantCulture);
 }
