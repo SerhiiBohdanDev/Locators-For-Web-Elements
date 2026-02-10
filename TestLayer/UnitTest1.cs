@@ -2,6 +2,7 @@ using LocatorsForWebElements.BusinessLayer.Models;
 using LocatorsForWebElements.BusinessLayer.Pages;
 using LocatorsForWebElements.CoreLayer;
 using OpenQA.Selenium.Chrome;
+using System.Linq;
 
 namespace LocatorsForWebElements.TestLayer
 {
@@ -65,12 +66,9 @@ namespace LocatorsForWebElements.TestLayer
                 .ClickFind();
 
             var result = mainPage.GetSearchResultTitles();
-            foreach (var item in result)
+            foreach (var item in result.Where(item => !item.Contains(term, StringComparison.InvariantCultureIgnoreCase)))
             {
-                if (!item.Contains(term, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    Assert.Fail($"'{item}' does NOT contain '{term}'");
-                }
+                Assert.Fail($"'{item}' does NOT contain '{term}'");
             }
 
             Assert.Pass($"All link titles contain term '{term}'");
