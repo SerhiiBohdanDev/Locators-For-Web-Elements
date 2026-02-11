@@ -2,7 +2,6 @@ using LocatorsForWebElements.BusinessLayer.Models;
 using LocatorsForWebElements.BusinessLayer.Pages;
 using LocatorsForWebElements.CoreLayer;
 using OpenQA.Selenium.Chrome;
-using System.Linq;
 
 namespace LocatorsForWebElements.TestLayer
 {

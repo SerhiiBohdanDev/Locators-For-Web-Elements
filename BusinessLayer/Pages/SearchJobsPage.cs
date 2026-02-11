@@ -8,7 +8,7 @@ internal class SearchJobsPage
 
     private readonly By form = By.XPath("//*[@id=\"anchor-list\"]//child::form");
     private readonly By keywordSearchField = By.CssSelector("input[data-testid='search-input']");
-    private readonly By locationDropdown = By.XPath("//input[contains(@class, 'Dropdown_defaultOption__pvL_3') and contains(@class, 'ym-disable-keys') and contains(@class, 'dropdown__input')]");
+    private readonly By locationDropdown = By.XPath("//input[contains(@class, 'dropdown__input')]");
     private readonly By remoteCheckbox = By.Id("checkbox-vacancy_type-Remote-«r0»");
     private readonly By searchButton = By.XPath("//*[@id='anchor-list']//child::button[@type='submit']");
     private readonly By resultsContainer = By.ClassName("List_list___59gh");

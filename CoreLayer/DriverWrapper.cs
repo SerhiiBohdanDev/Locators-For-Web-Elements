@@ -77,13 +77,15 @@ internal class DriverWrapper
     /// <param name="parent"></param>
     /// <param name="checkAction">Action to perform on element to decide whether return element or null</param>
     /// <returns></returns>
-    /// <exception cref="StaleElementReferenceException"></exception>
+    /// <exception cref="StaleElementReferenceException">Throws if element was stale</exception>
+    /// <exception cref="NoSuchElementException">Throws if element was not found</exception>
     private IWebElement WaitForElement(
         By by, 
         IWebElement? parent = default, 
         Func<IWebElement?, IWebElement?>? checkAction = null)
     {
         int retries = 0;
+        Type exceptionCaught = typeof(NoSuchElementException);
         while (retries < MaxRetries)
         {
             try
@@ -97,6 +99,12 @@ internal class DriverWrapper
                     }
                     catch (StaleElementReferenceException)
                     {
+                        exceptionCaught = typeof(StaleElementReferenceException);
+                        return null;
+                    }
+                    catch (NoSuchElementException)
+                    {
+                        exceptionCaught = typeof(NoSuchElementException);
                         return null;
                     }
                 });
@@ -106,7 +114,15 @@ internal class DriverWrapper
                 retries++;
             }
         }
-        throw new StaleElementReferenceException($"Element located by {by} remained stale after {MaxRetries} attempts.");
+
+        if (exceptionCaught == typeof(NoSuchElementException))
+        {
+            throw new NoSuchElementException($"Could not find element located by {by} after {MaxRetries} attempts.");
+        }
+        else
+        {
+            throw new StaleElementReferenceException($"Element located by {by} remained stale after {MaxRetries} attempts.");
+        }
     }
 
     private ReadOnlyCollection<IWebElement> WaitForElements(
@@ -115,6 +131,7 @@ internal class DriverWrapper
         Func<IWebElement?, IWebElement?>? checkAction = null)
     {
         int retries = 0;
+        Type exceptionCaught = typeof(NoSuchElementException);
         while (retries < MaxRetries)
         {
             try
@@ -128,6 +145,12 @@ internal class DriverWrapper
                     }
                     catch (StaleElementReferenceException)
                     {
+                        exceptionCaught = typeof(StaleElementReferenceException);
+                        return null;
+                    }
+                    catch (NoSuchElementException)
+                    {
+                        exceptionCaught = typeof(NoSuchElementException);
                         return null;
                     }
                 });
@@ -137,7 +160,15 @@ internal class DriverWrapper
                 retries++;
             }
         }
-        throw new StaleElementReferenceException($"Element located by {by} remained stale after {MaxRetries} attempts.");
+
+        if (exceptionCaught == typeof(NoSuchElementException))
+        {
+            throw new NoSuchElementException($"Could not find elements located by {by} after {MaxRetries} attempts.");
+        }
+        else
+        {
+            throw new StaleElementReferenceException($"Elements located by {by} remained stale after {MaxRetries} attempts.");
+        }
     }
 
     private static IWebElement? GetVisibleElement(IWebElement? element)
