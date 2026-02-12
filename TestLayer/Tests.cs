@@ -31,25 +31,25 @@ namespace LocatorsForWebElements.TestLayer
                 .ClickSearch();
 
             var jobInformation = searchPage.GetJobInformation();
-            var result = false;
+            var isInformationContainsLanguage = false;
             for (int i = 0; i < jobInformation.Count; i++)
             {
                 for (int k = 0; k < model.Language.Length; k++)
                 {
                     if (ContainsText(jobInformation[i], model.Language[k]))
                     {
-                        result = true;
+                        isInformationContainsLanguage = true;
                         break;
                     }
                 }
 
-                if (result)
+                if (isInformationContainsLanguage)
                 {
                     break;
                 }
             }
 
-            Assert.That(result, Is.True);
+            Assert.That(isInformationContainsLanguage, Is.True);
         }
 
         [TestCase("BLOCKCHAIN")]
@@ -78,17 +78,26 @@ namespace LocatorsForWebElements.TestLayer
             _driver.Close();
         }
 
-        private static IEnumerable<JobSearchModel> JobsSearchData()
+        private static IEnumerable<TestCaseData> JobsSearchData()
         {
-            yield return new JobSearchModel() { Language = new string[] { "JavaScript", "JS", "Javascript" }, Location = "Georgia" };
-            yield return new JobSearchModel() { Language = new string[] { "C#", "c#" }, Location = "Georgia" };
-            yield return new JobSearchModel() { Language = new string[] { "Python", "python" }, Location = "Georgia" };
-            yield return new JobSearchModel() { Language = new string[] { "JavaScript", "JS", "Javascript" }, Location = "Belgium" };
-            yield return new JobSearchModel() { Language = new string[] { "C#", "c#" }, Location = "Belgium" };
-            yield return new JobSearchModel() { Language = new string[] { "Python", "python" }, Location = "Belgium" };
-            yield return new JobSearchModel() { Language = new string[] { "JavaScript", "JS", "Javascript" }, Location = "Armenia" };
-            yield return new JobSearchModel() { Language = new string[] { "C#", "c#" }, Location = "Armenia" };
-            yield return new JobSearchModel() { Language = new string[] { "Python", "python" }, Location = "Armenia" };
+            var cases = new JobSearchModel[]
+            {
+                new () { Language = new string[] { "JavaScript", "JS", "Javascript" }, Location = "Georgia" },
+                new () { Language = new string[] { "C#", "c#" }, Location = "Georgia" },
+                new () { Language = new string[] { "Python", "python" }, Location = "Georgia" },
+                new () { Language = new string[] { "JavaScript", "JS", "Javascript" }, Location = "Belgium" },
+                new () { Language = new string[] { "C#", "c#" }, Location = "Belgium" },
+                new () { Language = new string[] { "Python", "python" }, Location = "Belgium" },
+                new () { Language = new string[] { "JavaScript", "JS", "Javascript" }, Location = "Armenia" },
+                new () { Language = new string[] { "C#", "c#" }, Location = "Armenia" },
+                new () { Language = new string[] { "Python", "python" }, Location = "Armenia" },
+            };
+
+            foreach (var model in cases)
+            {
+                yield return new TestCaseData(model)
+                    .SetName($"SearchJobsTest(\"{model.Language[0]}\", \"{model.Location}\")");
+            }
         }
 
         private static bool ContainsText(string text, string target) => text.Contains(target, StringComparison.InvariantCulture);
