@@ -63,13 +63,25 @@ namespace LocatorsForWebElements.TestLayer
                 .EnterSearchTerm(term)
                 .ClickFind();
 
-            var result = mainPage.GetSearchResultTitles();
-            foreach (var item in result.Where(item => !item.Contains(term, StringComparison.InvariantCultureIgnoreCase)))
+            List<string> titles = mainPage.GetSearchResultTitles();
+            var allTitlesContainTerm = true;
+            string titleThatMissesTerm = string.Empty;
+            foreach (var title in titles)
             {
-                Assert.Fail($"'{item}' does NOT contain '{term}'");
+                if (!title.Contains(term, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    titleThatMissesTerm = title;
+                    allTitlesContainTerm = false;
+                    break;
+                }
             }
 
-            Assert.Pass($"All link titles contain term '{term}'");
+            if (!string.IsNullOrEmpty(titleThatMissesTerm))
+            {
+                Console.WriteLine($"'{titleThatMissesTerm}' does NOT contain '{term}'");
+            }
+
+            Assert.That(allTitlesContainTerm, Is.True);
         }
 
         [TearDown]
