@@ -55,6 +55,11 @@ internal class DriverWrapper
         return WaitForElement(by, parent);
     }
 
+    public ReadOnlyCollection<IWebElement> WaitForElementsCollectionToBePresent(By by, IWebElement? parent = default)
+    {
+        return WaitForElements(by, parent);
+    }
+
     public IWebElement WaitForElementToBeVisible(By by, IWebElement? parent = default)
     {
         return WaitForElement(by, parent, GetVisibleElement);

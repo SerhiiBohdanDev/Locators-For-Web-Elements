@@ -7,15 +7,13 @@ internal class SearchJobsPage
 {
     private readonly DriverWrapper _driver;
 
-    private readonly By _form = By.XPath("//*[@id=\"anchor-list\"]//child::form");
-    private readonly By _keywordSearchField = By.CssSelector("input[data-testid='search-input']");
-    private readonly By _locationDropdown = By.XPath("//input[contains(@class, 'dropdown__input')]");
+    private readonly By _keywordSearchField = By.XPath("//*[@id='anchor-list']//form//input[@data-testid='search-input']");
+    private readonly By _locationDropdown = By.XPath("//*[@id='anchor-list']//form//input[contains(@class, 'dropdown__input')]");
     private readonly By _remoteCheckbox = By.Id("checkbox-vacancy_type-Remote-«r0»");
     private readonly By _searchButton = By.XPath("//*[@id='anchor-list']//child::button[@type='submit']");
     private readonly By _resultsContainer = By.ClassName("List_list___59gh");
     private readonly By _jobCardTitle = By.CssSelector("span[data-testid='job-card-title']");
     private readonly By _shortJobDescription = By.CssSelector("div[data-testid='job-card-description']");
-    private readonly By _fullDescriptionContainer = By.CssSelector("div[data-testid='categories-container']");
     private readonly By _descriptionSentences = By.CssSelector("div[data-testid='rich-text']");
     private readonly By _lastElement = By.XPath("./*[last()]");
 
@@ -26,16 +24,14 @@ internal class SearchJobsPage
 
     public SearchJobsPage EnterLanguage(string[] language)
     {
-        var formContainer = _driver.WaitForElementToBePresent(_form);
-        var element = _driver.WaitForElementToBeClickable(_keywordSearchField, formContainer);
+        var element = _driver.WaitForElementToBeClickable(_keywordSearchField);
         EnterText(element, language[0]);
         return this;
     }
 
     public SearchJobsPage EnterLocation(string location)
     {
-        var formContainer = _driver.WaitForElementToBePresent(_form);
-        var element = _driver.WaitForElementToBeClickable(_locationDropdown, formContainer);
+        var element = _driver.WaitForElementToBeClickable(_locationDropdown);
         EnterText(element, location, true);
         return this;
     }
@@ -62,14 +58,13 @@ internal class SearchJobsPage
         var results = new List<string>();
         var container = _driver.WaitForElementToBeVisible(_resultsContainer);
         var lastResult = _driver.WaitForElementToBeVisible(_lastElement, container);
-        var title = lastResult.FindElement(_jobCardTitle);
+        var title = _driver.WaitForElementToBePresent(_jobCardTitle, lastResult);
         results.Add(title.Text);
 
-        var shortDescription = lastResult.FindElement(_shortJobDescription);
+        var shortDescription = _driver.WaitForElementToBePresent(_shortJobDescription, lastResult);
         results.Add(shortDescription.Text);
 
-        IWebElement fullDescription = lastResult.FindElement(_fullDescriptionContainer);
-        ReadOnlyCollection<IWebElement> sentences = fullDescription.FindElements(_descriptionSentences);
+        ReadOnlyCollection<IWebElement> sentences = _driver.WaitForElementsCollectionToBePresent(_descriptionSentences, lastResult);
         for (int i = 0; i < sentences.Count; i++)
         {
             string? text = sentences[i].GetText();

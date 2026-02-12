@@ -14,7 +14,7 @@ namespace LocatorsForWebElements.TestLayer
         {
             var options = new ChromeOptions();
             options.AddArgument("start-maximized");
-            _driver = new DriverWrapper(new ChromeDriver(options), TimeSpan.FromSeconds(10));
+            _driver = new DriverWrapper(new ChromeDriver(options), TimeSpan.FromSeconds(3));
         }
 
         [TestCaseSource(nameof(JobsSearchData))]
