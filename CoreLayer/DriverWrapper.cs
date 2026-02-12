@@ -1,4 +1,4 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.Extensions;
@@ -105,6 +105,8 @@ internal class DriverWrapper
         IWebElement? parent = default,
         Func<IWebElement?, IWebElement?>? checkAction = null)
     {
+        ArgumentNullException.ThrowIfNull(by);
+
         int retries = 0;
         Type exceptionCaught = typeof(NoSuchElementException);
         while (retries < MaxRetries)
@@ -151,6 +153,8 @@ internal class DriverWrapper
         IWebElement? parent = default,
         Func<IWebElement?, IWebElement?>? checkAction = null)
     {
+        ArgumentNullException.ThrowIfNull(by);
+
         int retries = 0;
         Type exceptionCaught = typeof(NoSuchElementException);
         while (retries < MaxRetries)
