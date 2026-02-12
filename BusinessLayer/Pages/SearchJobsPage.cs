@@ -1,76 +1,78 @@
-﻿using LocatorsForWebElements.CoreLayer;
+﻿using System.Collections.ObjectModel;
+using LocatorsForWebElements.CoreLayer;
 using OpenQA.Selenium;
 
 namespace LocatorsForWebElements.BusinessLayer.Pages;
 internal class SearchJobsPage
 {
-    private readonly DriverWrapper driver;
+    private readonly DriverWrapper _driver;
 
-    private readonly By form = By.XPath("//*[@id=\"anchor-list\"]//child::form");
-    private readonly By keywordSearchField = By.CssSelector("input[data-testid='search-input']");
-    private readonly By locationDropdown = By.XPath("//input[contains(@class, 'dropdown__input')]");
-    private readonly By remoteCheckbox = By.Id("checkbox-vacancy_type-Remote-«r0»");
-    private readonly By searchButton = By.XPath("//*[@id='anchor-list']//child::button[@type='submit']");
-    private readonly By resultsContainer = By.ClassName("List_list___59gh");
-    private readonly By jobCardTitle = By.CssSelector("span[data-testid='job-card-title']");
-    private readonly By shortJobDescription = By.CssSelector("div[data-testid='job-card-description']");
-    private readonly By fullDescriptionContainer = By.CssSelector("div[data-testid='categories-container']");
-    private readonly By descriptionSentences = By.CssSelector("div[data-testid='rich-text']");
-    private readonly By lastElement = By.XPath("./*[last()]");
+    private readonly By _form = By.XPath("//*[@id=\"anchor-list\"]//child::form");
+    private readonly By _keywordSearchField = By.CssSelector("input[data-testid='search-input']");
+    private readonly By _locationDropdown = By.XPath("//input[contains(@class, 'dropdown__input')]");
+    private readonly By _remoteCheckbox = By.Id("checkbox-vacancy_type-Remote-«r0»");
+    private readonly By _searchButton = By.XPath("//*[@id='anchor-list']//child::button[@type='submit']");
+    private readonly By _resultsContainer = By.ClassName("List_list___59gh");
+    private readonly By _jobCardTitle = By.CssSelector("span[data-testid='job-card-title']");
+    private readonly By _shortJobDescription = By.CssSelector("div[data-testid='job-card-description']");
+    private readonly By _fullDescriptionContainer = By.CssSelector("div[data-testid='categories-container']");
+    private readonly By _descriptionSentences = By.CssSelector("div[data-testid='rich-text']");
+    private readonly By _lastElement = By.XPath("./*[last()]");
 
     public SearchJobsPage(DriverWrapper driver)
     {
-        this.driver = driver;
+        _driver = driver;
     }
 
     public SearchJobsPage EnterLanguage(string[] language)
     {
-        var formContainer = driver.WaitForElementToBePresent(form);
-        var element = driver.WaitForElementToBeClickable(keywordSearchField, formContainer);
+        var formContainer = _driver.WaitForElementToBePresent(_form);
+        var element = _driver.WaitForElementToBeClickable(_keywordSearchField, formContainer);
         EnterText(element, language[0]);
         return this;
     }
 
     public SearchJobsPage EnterLocation(string location)
     {
-        var formContainer = driver.WaitForElementToBePresent(form);
-        var element = driver.WaitForElementToBeClickable(locationDropdown, formContainer);
+        var formContainer = _driver.WaitForElementToBePresent(_form);
+        var element = _driver.WaitForElementToBeClickable(_locationDropdown, formContainer);
         EnterText(element, location, true);
         return this;
     }
 
     public SearchJobsPage ClickRemoteCheckbox()
     {
-        var checkbox = driver.WaitForElementToBePresent(remoteCheckbox);
+        var checkbox = _driver.WaitForElementToBePresent(_remoteCheckbox);
+
         // the checkbox has opacity at 0 which makes it Displayed property false, and so clicking is not allowed
         // so we use js to click
-        driver.JavascriptClick(checkbox);
+        _driver.JavascriptClick(checkbox);
         return this;
     }
 
     public SearchJobsPage ClickSearch()
     {
-        var search = driver.WaitForElementToBeClickable(searchButton);
-        driver.SafeClick(search);
+        var search = _driver.WaitForElementToBeClickable(_searchButton);
+        _driver.SafeClick(search);
         return this;
     }
 
     public List<string> GetJobInformation()
     {
         var results = new List<string>();
-        var container = driver.WaitForElementToBeVisible(resultsContainer);
-        var lastResult = driver.WaitForElementToBeVisible(lastElement, container);
-        var title = lastResult.FindElement(jobCardTitle);
+        var container = _driver.WaitForElementToBeVisible(_resultsContainer);
+        var lastResult = _driver.WaitForElementToBeVisible(_lastElement, container);
+        var title = lastResult.FindElement(_jobCardTitle);
         results.Add(title.Text);
 
-        var shortDescription = lastResult.FindElement(shortJobDescription);
+        var shortDescription = lastResult.FindElement(_shortJobDescription);
         results.Add(shortDescription.Text);
 
-        var fullDescription = lastResult.FindElement(fullDescriptionContainer);
-        var sentences = fullDescription.FindElements(descriptionSentences);
+        IWebElement fullDescription = lastResult.FindElement(_fullDescriptionContainer);
+        ReadOnlyCollection<IWebElement> sentences = fullDescription.FindElements(_descriptionSentences);
         for (int i = 0; i < sentences.Count; i++)
         {
-            var text = sentences[i].GetText();
+            string? text = sentences[i].GetText();
             if (text != null)
             {
                 results.Add(text);
@@ -83,6 +85,7 @@ internal class SearchJobsPage
     private static void EnterText(IWebElement element, string text, bool pressEnter = false)
     {
         element.SendKeys(text);
+
         // in order to correctly select location have to press enter
         if (pressEnter)
         {

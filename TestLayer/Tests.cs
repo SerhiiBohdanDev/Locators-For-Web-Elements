@@ -1,4 +1,4 @@
-using LocatorsForWebElements.BusinessLayer.Models;
+﻿using LocatorsForWebElements.BusinessLayer.Models;
 using LocatorsForWebElements.BusinessLayer.Pages;
 using LocatorsForWebElements.CoreLayer;
 using OpenQA.Selenium.Chrome;
@@ -7,25 +7,24 @@ namespace LocatorsForWebElements.TestLayer
 {
     internal class Tests
     {
-        private DriverWrapper driver;
+        private DriverWrapper _driver;
 
         [SetUp]
         public void Setup()
         {
             var options = new ChromeOptions();
             options.AddArgument("start-maximized");
-            //options.AddArgument("--auto-open-devtools-for-tabs");
-            driver = new DriverWrapper(new ChromeDriver(options), TimeSpan.FromSeconds(10));
+            _driver = new DriverWrapper(new ChromeDriver(options), TimeSpan.FromSeconds(10));
         }
 
         [TestCaseSource(nameof(JobsSearchData))]
         public void SearchJobsTest(JobSearchModel model)
         {
-            new MainPage(this.driver)
+            new MainPage(_driver)
                 .Open()
                 .ClickJoinUs();
 
-            var searchPage = new SearchJobsPage(this.driver)
+            var searchPage = new SearchJobsPage(_driver)
                 .EnterLanguage(model.Language)
                 .EnterLocation(model.Location)
                 .ClickRemoteCheckbox()
@@ -58,7 +57,7 @@ namespace LocatorsForWebElements.TestLayer
         [TestCase("Automation")]
         public void GeneralSearchTest(string term)
         {
-            var mainPage = new MainPage(this.driver)
+            var mainPage = new MainPage(_driver)
                 .Open()
                 .ClickMagnifyingGlass()
                 .EnterSearchTerm(term)
@@ -76,7 +75,7 @@ namespace LocatorsForWebElements.TestLayer
         [TearDown]
         public void Teardown()
         {
-            driver.Close();
+            _driver.Close();
         }
 
         private static IEnumerable<JobSearchModel> JobsSearchData()
