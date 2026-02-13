@@ -86,8 +86,8 @@ dotnet_naming_style.camel_case_underscore_style.capitalization = camel_case
 csharp_using_directive_placement = outside_namespace:suggestion
 dotnet_sort_system_directives_first = true
 csharp_prefer_braces = true:silent
-csharp_preserve_single_line_blocks = true:none
-csharp_preserve_single_line_statements = false:none
+csharp_preserve_single_line_blocks = true
+csharp_preserve_single_line_statements = false
 csharp_prefer_static_local_function = true:suggestion
 csharp_prefer_simple_using_statement = false:none
 csharp_style_prefer_switch_expression = true:suggestion
@@ -96,10 +96,10 @@ dotnet_style_readonly_field = true:suggestion
 # Expression-level preferences
 dotnet_style_object_initializer = true:suggestion
 dotnet_style_collection_initializer = true:suggestion
-dotnet_style_prefer_collection_expression = when_types_exactly_match
+dotnet_style_prefer_collection_expression = when_types_exactly_match:suggestion
 dotnet_style_explicit_tuple_names = true:suggestion
 dotnet_style_coalesce_expression = true:suggestion
-dotnet_style_null_propagation = true
+dotnet_style_null_propagation = true:suggestion
 dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
 dotnet_style_prefer_inferred_tuple_names = true:suggestion
 dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
@@ -163,7 +163,7 @@ csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
 # License header
-file_header_template = Licensed to the .NET Foundation under one or more agreements.\nThe .NET Foundation licenses this file to you under the MIT license.
+file_header_template = Licensed to the .NET Foundation under one or more agreements.\nThe .NET Foundation licenses this file to you under the MIT license.:suggestion
 
 [src/libraries/System.Net.Http/src/System/Net/Http/{SocketsHttpHandler/Http3RequestStream.cs,BrowserHttpHandler/BrowserHttpHandler.cs}]
 # disable CA2025, the analyzer throws a NullReferenceException when processing this file: https://github.com/dotnet/roslyn-analyzers/issues/7652
@@ -211,11 +211,24 @@ end_of_line = crlf
 ###############################
 
 [*.cs]
-dotnet_diagnostic.SA1101.severity = none # Prefix local calls with this
-dotnet_diagnostic.SA1308.severity = none # Variable names should not be prefixed
-dotnet_diagnostic.SA1309.severity = none # Field names must not begin with underscore
-dotnet_diagnostic.SA1206.severity = none # Declaration keywords must follow order, disabled because it wants "required" before "public"
-dotnet_diagnostic.SA1312.severity = none # Variable names should begin with lower-case letter, to allow discard _
+# Prefix local calls with this
+dotnet_diagnostic.SA1101.severity = none
 
-dotnet_diagnostic.SA1633.severity = none # File should have header
-dotnet_diagnostic.SA1600.severity = none # Elements should be documented
+# Variable names should not be prefixed
+dotnet_diagnostic.SA1308.severity = none
+
+# Field names must not begin with underscore
+dotnet_diagnostic.SA1309.severity = none
+
+# Declaration keywords must follow order
+# Disabled because it wants "required" before "public"
+dotnet_diagnostic.SA1206.severity = none
+
+# Variable names should begin with lower-case letter, to allow discard _
+dotnet_diagnostic.SA1312.severity = none
+
+# File should have header
+dotnet_diagnostic.SA1633.severity = none
+
+# Elements should be documented
+dotnet_diagnostic.SA1600.severity = none
