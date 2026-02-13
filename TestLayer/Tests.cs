@@ -65,7 +65,7 @@ namespace LocatorsForWebElements.TestLayer
 
             List<string> titles = mainPage.GetSearchResultTitles();
             var allTitlesContainTerm = true;
-            string titleThatMissesTerm = string.Empty;
+            var titleThatMissesTerm = string.Empty;
             foreach (var title in titles)
             {
                 if (!title.Contains(term, StringComparison.InvariantCultureIgnoreCase))
@@ -76,7 +76,7 @@ namespace LocatorsForWebElements.TestLayer
                 }
             }
 
-            if (!string.IsNullOrEmpty(titleThatMissesTerm))
+            if (!allTitlesContainTerm)
             {
                 Console.WriteLine($"'{titleThatMissesTerm}' does NOT contain '{term}'");
             }
