@@ -94,15 +94,15 @@ namespace LocatorsForWebElements.TestLayer
         {
             var cases = new JobSearchModel[]
             {
-                new () { Language = new string[] { "JavaScript", "JS", "Javascript" }, Location = "Georgia" },
-                new () { Language = new string[] { "C#", "c#" }, Location = "Georgia" },
-                new () { Language = new string[] { "Python", "python" }, Location = "Georgia" },
-                new () { Language = new string[] { "JavaScript", "JS", "Javascript" }, Location = "Belgium" },
-                new () { Language = new string[] { "C#", "c#" }, Location = "Belgium" },
-                new () { Language = new string[] { "Python", "python" }, Location = "Belgium" },
-                new () { Language = new string[] { "JavaScript", "JS", "Javascript" }, Location = "Armenia" },
-                new () { Language = new string[] { "C#", "c#" }, Location = "Armenia" },
-                new () { Language = new string[] { "Python", "python" }, Location = "Armenia" },
+                new() { Language = ["JavaScript", "JS", "Javascript"], Location = "Georgia" },
+                new() { Language = ["C#", "c#"], Location = "Georgia" },
+                new() { Language = ["Python", "python"], Location = "Georgia" },
+                new() { Language = ["JavaScript", "JS", "Javascript"], Location = "Belgium" },
+                new() { Language = ["C#", "c#"], Location = "Belgium" },
+                new() { Language = ["Python", "python"], Location = "Belgium" },
+                new() { Language = ["JavaScript", "JS", "Javascript"], Location = "Armenia" },
+                new() { Language = ["C#", "c#"], Location = "Armenia" },
+                new() { Language = ["Python", "python"], Location = "Armenia" },
             };
 
             foreach (var model in cases)
