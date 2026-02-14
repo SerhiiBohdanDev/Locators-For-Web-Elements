@@ -13,7 +13,13 @@ internal class MainPage
     private readonly By _joinUs = By.PartialLinkText("Join our Team");
     private readonly By _magnifyingGlass = By.CssSelector("button[class='header-search__button header__icon']");
     private readonly By _searchField = By.Name("q");
-    private readonly By _findButton = By.XPath("//form//child::button");
+
+    // only using this approach to satisfy task requirement,
+    // the commented out _fundButton should be used
+    private readonly By _form = By.TagName("form");
+    private readonly By _findButton = By.XPath("//button[contains(@class, 'large-gradient-button') and contains(@class, 'custom-search-button')]");
+
+    //private readonly By _findButton = By.XPath("//form//child::button");
     private readonly By _searchResult = By.ClassName("search-results__title-link");
 
     public MainPage(DriverWrapper driver)
@@ -57,9 +63,17 @@ internal class MainPage
 
     public MainPage ClickFind()
     {
+        // this approach is only here to satisfy requirements to include all By methods
+        // remove after
+        var form = _driver.WaitForElementToBePresent(_form);
         _driver
+            .WaitForElementToBeClickable(_findButton, form)
+            .Click();
+
+        /*_driver
             .WaitForElementToBeClickable(_findButton)
             .Click();
+        */
         return this;
     }
 
