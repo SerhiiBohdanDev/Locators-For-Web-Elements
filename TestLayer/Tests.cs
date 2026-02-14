@@ -84,13 +84,10 @@ namespace LocatorsForWebElements.TestLayer
             List<string> titles = mainPage.GetSearchResultTitles();
             var allTitlesContainTerm = true;
             List<string> titlesThatDoNoContainTerm = [];
-            foreach (var title in titles)
+            foreach (var title in titles.Where(title => !title.Contains(term, StringComparison.InvariantCultureIgnoreCase)))
             {
-                if (!title.Contains(term, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    allTitlesContainTerm = false;
-                    titlesThatDoNoContainTerm.Add(title);
-                }
+                allTitlesContainTerm = false;
+                titlesThatDoNoContainTerm.Add(title);
             }
 
             if (!allTitlesContainTerm)
