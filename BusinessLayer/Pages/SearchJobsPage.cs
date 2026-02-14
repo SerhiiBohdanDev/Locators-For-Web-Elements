@@ -3,6 +3,7 @@ using LocatorsForWebElements.CoreLayer;
 using OpenQA.Selenium;
 
 namespace LocatorsForWebElements.BusinessLayer.Pages;
+
 internal class SearchJobsPage
 {
     private readonly DriverWrapper _driver;

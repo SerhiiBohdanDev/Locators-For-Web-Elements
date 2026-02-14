@@ -2,6 +2,7 @@
 using OpenQA.Selenium;
 
 namespace LocatorsForWebElements.BusinessLayer.Pages;
+
 internal class MainPage
 {
     private const string PageUrl = "https://www.epam.com/";

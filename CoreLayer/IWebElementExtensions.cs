@@ -2,6 +2,7 @@
 using OpenQA.Selenium;
 
 namespace LocatorsForWebElements.CoreLayer;
+
 internal static class IWebElementExtensions
 {
     public static ReadOnlyCollection<IWebElement> GetAllDirectChildren(this IWebElement element)

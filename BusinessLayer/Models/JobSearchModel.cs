@@ -1,4 +1,5 @@
 ﻿namespace LocatorsForWebElements.BusinessLayer.Models;
+
 internal class JobSearchModel
 {
     // using array to allow name variants (like Javascript/JS)
