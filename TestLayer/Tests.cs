@@ -1,4 +1,5 @@
-﻿using LocatorsForWebElements.BusinessLayer.Models;
+﻿using System.Text;
+using LocatorsForWebElements.BusinessLayer.Models;
 using LocatorsForWebElements.BusinessLayer.Pages;
 using LocatorsForWebElements.CoreLayer;
 using OpenQA.Selenium.Chrome;
@@ -7,6 +8,8 @@ namespace LocatorsForWebElements.TestLayer
 {
     internal class Tests
     {
+        private const string JobDescriptionMissingKeywordMessage = "Job description is missing the following keyword(s):";
+        private const string TitleMissingSearchTermMessage = "Following titles are missing the following search term:";
         private DriverWrapper _driver;
 
         [SetUp]
@@ -49,6 +52,21 @@ namespace LocatorsForWebElements.TestLayer
                 }
             }
 
+            if (!isInformationContainsLanguage)
+            {
+                var builder = new StringBuilder();
+                string keywords = string.Join(',', model.Language);
+
+                builder.AppendLine($"{JobDescriptionMissingKeywordMessage} [{keywords}]");
+                builder.AppendLine();
+                for (int i = 0; i < jobInformation.Count; i++)
+                {
+                    builder.AppendLine(jobInformation[i]);
+                }
+
+                LogInformation(builder.ToString());
+            }
+
             Assert.That(isInformationContainsLanguage, Is.True);
         }
 
@@ -65,20 +83,27 @@ namespace LocatorsForWebElements.TestLayer
 
             List<string> titles = mainPage.GetSearchResultTitles();
             var allTitlesContainTerm = true;
-            var titleThatMissesTerm = string.Empty;
+            List<string> titlesThatDoNoContainTerm = [];
             foreach (var title in titles)
             {
                 if (!title.Contains(term, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    titleThatMissesTerm = title;
                     allTitlesContainTerm = false;
-                    break;
+                    titlesThatDoNoContainTerm.Add(title);
                 }
             }
 
             if (!allTitlesContainTerm)
             {
-                Console.WriteLine($"'{titleThatMissesTerm}' does NOT contain '{term}'");
+                var builder = new StringBuilder();
+                builder.AppendLine($"{TitleMissingSearchTermMessage} [{term}]");
+                builder.AppendLine();
+                for (int i = 0; i < titlesThatDoNoContainTerm.Count; i++)
+                {
+                    builder.AppendLine(titlesThatDoNoContainTerm[i]);
+                }
+
+                LogInformation(builder.ToString());
             }
 
             Assert.That(allTitlesContainTerm, Is.True);
@@ -113,5 +138,10 @@ namespace LocatorsForWebElements.TestLayer
         }
 
         private static bool ContainsText(string text, string target) => text.Contains(target, StringComparison.InvariantCulture);
+
+        private static void LogInformation(string text)
+        {
+            Console.WriteLine(text);
+        }
     }
 }
