@@ -64,7 +64,7 @@ internal class DriverWrapper
         return WaitForElement<ReadOnlyCollection<IWebElement>>(by, () =>
         {
             // using ! because it will either return collection of elements or throw exception
-            return CheckElementsCollectionValidity(FindElements(by, parent))!;
+            return CheckElementsCollectionValidity(FindElements(by, parent));
         });
     }
 
@@ -89,7 +89,7 @@ internal class DriverWrapper
         return WaitForElement<ReadOnlyCollection<IWebElement>>(by, () =>
         {
             // using ! because it will either return collection of elements or throw exception
-            return CheckElementsCollectionValidity(FindElements(by, parent), GetClickableElement)!;
+            return CheckElementsCollectionValidity(FindElements(by, parent), GetClickableElement);
         });
     }
 
@@ -122,13 +122,16 @@ internal class DriverWrapper
         return element;
     }
 
-    private static ReadOnlyCollection<IWebElement>? CheckElementsCollectionValidity(
+    private static ReadOnlyCollection<IWebElement> CheckElementsCollectionValidity(
         ReadOnlyCollection<IWebElement> elements,
         Func<IWebElement, IWebElement>? checkAction = null)
     {
+        // returning null allows running WebDriverWait until we receive the elements
         if (elements.Count == 0)
         {
+#pragma warning disable CS8603 // Possible null reference return.
             return null;
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         if (checkAction != null)
