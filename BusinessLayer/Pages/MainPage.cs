@@ -35,12 +35,12 @@ internal class MainPage
 
     public MainPage ClickJoinUs()
     {
-        var topRow = _driver.WaitForElementToBePresent(_topNavRow);
-        var careers = _driver.WaitForElementToBeClickable(_careersText, topRow);
+        var topRow = _driver.FindElement(_topNavRow);
+        var careers = _driver.FindClickableElement(_careersText, topRow);
         _driver.Hover(careers);
 
         _driver
-            .WaitForElementToBeClickable(_joinUs, topRow)
+            .FindClickableElement(_joinUs, topRow)
             .Click();
         return this;
     }
@@ -48,7 +48,7 @@ internal class MainPage
     public MainPage ClickMagnifyingGlass()
     {
         _driver
-            .WaitForElementToBeClickable(_magnifyingGlass)
+            .FindClickableElement(_magnifyingGlass)
             .Click();
         return this;
     }
@@ -56,7 +56,7 @@ internal class MainPage
     public MainPage EnterSearchTerm(string text)
     {
         _driver
-            .WaitForElementToBeClickable(_searchField)
+            .FindClickableElement(_searchField)
             .SendKeys(text);
         return this;
     }
@@ -65,13 +65,13 @@ internal class MainPage
     {
         // this approach is only here to satisfy requirements to include all By methods
         // remove after
-        var form = _driver.WaitForElementToBePresent(_form);
+        var form = _driver.FindElement(_form);
         _driver
-            .WaitForElementToBeClickable(_findButton, form)
+            .FindClickableElement(_findButton, form)
             .Click();
 
         /*_driver
-            .WaitForElementToBeClickable(_findButton)
+            .FindClickableElement(_findButton)
             .Click();
         */
         return this;
@@ -80,7 +80,7 @@ internal class MainPage
     public List<string> GetSearchResultTitles()
     {
         var results = new List<string>();
-        var elements = _driver.WaitForElementsCollectionToBeClickable(_searchResult);
+        var elements = _driver.FindClickableElements(_searchResult);
         foreach (var element in elements)
         {
             results.Add(element.Text);

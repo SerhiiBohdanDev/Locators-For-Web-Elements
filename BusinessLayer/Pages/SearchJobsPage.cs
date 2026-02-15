@@ -25,21 +25,21 @@ internal class SearchJobsPage
 
     public SearchJobsPage EnterLanguage(string[] language)
     {
-        var element = _driver.WaitForElementToBeClickable(_keywordSearchField);
+        var element = _driver.FindClickableElement(_keywordSearchField);
         EnterText(element, language[0]);
         return this;
     }
 
     public SearchJobsPage EnterLocation(string location)
     {
-        var element = _driver.WaitForElementToBeClickable(_locationDropdown);
+        var element = _driver.FindClickableElement(_locationDropdown);
         EnterText(element, location, true);
         return this;
     }
 
     public SearchJobsPage ClickRemoteCheckbox()
     {
-        var checkbox = _driver.WaitForElementToBePresent(_remoteCheckbox);
+        var checkbox = _driver.FindElement(_remoteCheckbox);
 
         // the checkbox has opacity at 0 which makes it Displayed property false, and so clicking is not allowed
         // so we use js to click
@@ -49,7 +49,7 @@ internal class SearchJobsPage
 
     public SearchJobsPage ClickSearch()
     {
-        var search = _driver.WaitForElementToBeClickable(_searchButton);
+        var search = _driver.FindClickableElement(_searchButton);
         _driver.SafeClick(search);
         return this;
     }
@@ -57,15 +57,15 @@ internal class SearchJobsPage
     public List<string> GetJobInformation()
     {
         var results = new List<string>();
-        var container = _driver.WaitForElementToBeVisible(_resultsContainer);
-        var lastResult = _driver.WaitForElementToBeVisible(_lastElement, container);
-        var title = _driver.WaitForElementToBePresent(_jobCardTitle, lastResult);
+        var container = _driver.FindDisplayedElement(_resultsContainer);
+        var lastResult = _driver.FindDisplayedElement(_lastElement, container);
+        var title = _driver.FindElement(_jobCardTitle, lastResult);
         results.Add(title.Text);
 
-        var shortDescription = _driver.WaitForElementToBePresent(_shortJobDescription, lastResult);
+        var shortDescription = _driver.FindElement(_shortJobDescription, lastResult);
         results.Add(shortDescription.Text);
 
-        ReadOnlyCollection<IWebElement> sentences = _driver.WaitForElementsCollectionToBePresent(_descriptionSentences, lastResult);
+        ReadOnlyCollection<IWebElement> sentences = _driver.FindElements(_descriptionSentences, lastResult);
         for (int i = 0; i < sentences.Count; i++)
         {
             string? text = sentences[i].GetText();

@@ -51,49 +51,49 @@ internal class DriverWrapper
                 .Perform();
     }
 
-    public IWebElement WaitForElementToBePresent(By by, IWebElement? parent = default)
+    public IWebElement FindElement(By by, IWebElement? parent = default)
     {
-        return WaitForElement<IWebElement>(by, () =>
+        return WaitForOneOrManyElements<IWebElement>(by, () =>
         {
-            return CheckElementValidity(FindElement(by, parent));
+            return CheckElementValidity(FindOneElement(by, parent));
         });
     }
 
-    public ReadOnlyCollection<IWebElement> WaitForElementsCollectionToBePresent(By by, IWebElement? parent = default)
+    public ReadOnlyCollection<IWebElement> FindElements(By by, IWebElement? parent = default)
     {
-        return WaitForElement<ReadOnlyCollection<IWebElement>>(by, () =>
-        {
-            // using ! because it will either return collection of elements or throw exception
-            return CheckElementsCollectionValidity(FindElements(by, parent));
-        });
-    }
-
-    public IWebElement WaitForElementToBeVisible(By by, IWebElement? parent = default)
-    {
-        return WaitForElement<IWebElement>(by, () =>
-        {
-            return CheckElementValidity(FindElement(by, parent), GetVisibleElement);
-        });
-    }
-
-    public IWebElement WaitForElementToBeClickable(By by, IWebElement? parent = default)
-    {
-        return WaitForElement<IWebElement>(by, () =>
-        {
-            return CheckElementValidity(FindElement(by, parent), GetClickableElement);
-        });
-    }
-
-    public ReadOnlyCollection<IWebElement> WaitForElementsCollectionToBeClickable(By by, IWebElement? parent = default)
-    {
-        return WaitForElement<ReadOnlyCollection<IWebElement>>(by, () =>
+        return WaitForOneOrManyElements<ReadOnlyCollection<IWebElement>>(by, () =>
         {
             // using ! because it will either return collection of elements or throw exception
-            return CheckElementsCollectionValidity(FindElements(by, parent), GetClickableElement);
+            return CheckElementsCollectionValidity(FindManyElements(by, parent));
         });
     }
 
-    private static IWebElement GetVisibleElement(IWebElement element)
+    public IWebElement FindDisplayedElement(By by, IWebElement? parent = default)
+    {
+        return WaitForOneOrManyElements<IWebElement>(by, () =>
+        {
+            return CheckElementValidity(FindOneElement(by, parent), GetDisplayedElement);
+        });
+    }
+
+    public IWebElement FindClickableElement(By by, IWebElement? parent = default)
+    {
+        return WaitForOneOrManyElements<IWebElement>(by, () =>
+        {
+            return CheckElementValidity(FindOneElement(by, parent), GetClickableElement);
+        });
+    }
+
+    public ReadOnlyCollection<IWebElement> FindClickableElements(By by, IWebElement? parent = default)
+    {
+        return WaitForOneOrManyElements<ReadOnlyCollection<IWebElement>>(by, () =>
+        {
+            // using ! because it will either return collection of elements or throw exception
+            return CheckElementsCollectionValidity(FindManyElements(by, parent), GetClickableElement);
+        });
+    }
+
+    private static IWebElement GetDisplayedElement(IWebElement element)
     {
         // accessing element's property forces check for stallness
         // is not null because when finding it NoSuchElementException would be thrown by driver
@@ -155,7 +155,7 @@ internal class DriverWrapper
     /// <exception cref="ArgumentNullException">Thrown if locator is null.</exception>
     /// <exception cref="NoSuchElementException">Thrown if element was not found when looking for a single element.</exception>
     /// <exception cref="StaleElementReferenceException">Thrown if an element or collection were stale.</exception>
-    private T WaitForElement<T>(By by, Func<T> validityCheckAction)
+    private T WaitForOneOrManyElements<T>(By by, Func<T> validityCheckAction)
     {
         ArgumentNullException.ThrowIfNull(by);
 
@@ -200,12 +200,12 @@ internal class DriverWrapper
         }
     }
 
-    private IWebElement FindElement(By by, IWebElement? parent = default)
+    private IWebElement FindOneElement(By by, IWebElement? parent = default)
     {
         return parent == null ? _driver.FindElement(by) : parent.FindElement(by);
     }
 
-    private ReadOnlyCollection<IWebElement> FindElements(By by, IWebElement? parent = default)
+    private ReadOnlyCollection<IWebElement> FindManyElements(By by, IWebElement? parent = default)
     {
         return parent == null ? _driver.FindElements(by) : parent.FindElements(by);
     }
