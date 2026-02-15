@@ -1,4 +1,4 @@
-﻿namespace LocatorsForWebElements.BusinessLayer.Models;
+﻿namespace LocatorsForWebElements.TestLayer.Models;
 
 internal class JobSearchModel
 {

@@ -1,7 +1,7 @@
 ﻿using System.Text;
-using LocatorsForWebElements.BusinessLayer.Models;
 using LocatorsForWebElements.BusinessLayer.Pages;
 using LocatorsForWebElements.CoreLayer;
+using LocatorsForWebElements.TestLayer.Models;
 using OpenQA.Selenium.Chrome;
 
 namespace LocatorsForWebElements.TestLayer
