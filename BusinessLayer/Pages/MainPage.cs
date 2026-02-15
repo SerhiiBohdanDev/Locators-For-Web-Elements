@@ -2,6 +2,7 @@
 using OpenQA.Selenium;
 
 namespace LocatorsForWebElements.BusinessLayer.Pages;
+
 internal class MainPage
 {
     private const string PageUrl = "https://www.epam.com/";
@@ -12,7 +13,13 @@ internal class MainPage
     private readonly By _joinUs = By.PartialLinkText("Join our Team");
     private readonly By _magnifyingGlass = By.CssSelector("button[class='header-search__button header__icon']");
     private readonly By _searchField = By.Name("q");
-    private readonly By _findButton = By.XPath("//form//child::button");
+
+    // only using this approach to satisfy task requirement,
+    // the commented out _fundButton should be used
+    private readonly By _form = By.TagName("form");
+    private readonly By _findButton = By.XPath("//button[contains(@class, 'large-gradient-button') and contains(@class, 'custom-search-button')]");
+
+    //private readonly By _findButton = By.XPath("//form//child::button");
     private readonly By _searchResult = By.ClassName("search-results__title-link");
 
     public MainPage(DriverWrapper driver)
@@ -28,12 +35,12 @@ internal class MainPage
 
     public MainPage ClickJoinUs()
     {
-        var topRow = _driver.WaitForElementToBePresent(_topNavRow);
-        var careers = _driver.WaitForElementToBeClickable(_careersText, topRow);
+        var topRow = _driver.FindElement(_topNavRow);
+        var careers = _driver.FindClickableElement(_careersText, topRow);
         _driver.Hover(careers);
 
         _driver
-            .WaitForElementToBeClickable(_joinUs, topRow)
+            .FindClickableElement(_joinUs, topRow)
             .Click();
         return this;
     }
@@ -41,7 +48,7 @@ internal class MainPage
     public MainPage ClickMagnifyingGlass()
     {
         _driver
-            .WaitForElementToBeClickable(_magnifyingGlass)
+            .FindClickableElement(_magnifyingGlass)
             .Click();
         return this;
     }
@@ -49,23 +56,31 @@ internal class MainPage
     public MainPage EnterSearchTerm(string text)
     {
         _driver
-            .WaitForElementToBeClickable(_searchField)
+            .FindClickableElement(_searchField)
             .SendKeys(text);
         return this;
     }
 
     public MainPage ClickFind()
     {
+        // this approach is only here to satisfy requirements to include all By methods
+        // remove after
+        var form = _driver.FindElement(_form);
         _driver
-            .WaitForElementToBeClickable(_findButton)
+            .FindClickableElement(_findButton, form)
             .Click();
+
+        /*_driver
+            .FindClickableElement(_findButton)
+            .Click();
+        */
         return this;
     }
 
     public List<string> GetSearchResultTitles()
     {
         var results = new List<string>();
-        var elements = _driver.WaitForElementsCollectionToBeClickable(_searchResult);
+        var elements = _driver.FindClickableElements(_searchResult);
         foreach (var element in elements)
         {
             results.Add(element.Text);
