@@ -8,6 +8,7 @@ namespace LocatorsForWebElements.CoreLayer;
 
 internal class DriverWrapper
 {
+    private const string JavascriptClickCommand = "arguments[0].click();";
     private const int MaxRetries = 3;
     private readonly IWebDriver _driver;
     private readonly TimeSpan _timeout;
@@ -41,7 +42,7 @@ internal class DriverWrapper
 
     public void JavascriptClick(IWebElement element)
     {
-        _driver.ExecuteJavaScript("arguments[0].click();", element);
+        _driver.ExecuteJavaScript(JavascriptClickCommand, element);
     }
 
     public void Hover(IWebElement element)
